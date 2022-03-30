@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+         body{
+        text-align: center;
+        background-color: lightblue;
+      }
+      #showData{
+        text-align: center;
+        position: absolute;
+        left: 30%;
+      }
+      #demo{
+        font-size: larger;
+        font-weight: 800;
+      }
+    </style>
+</head>
+<body>
+    <div class="parent-flex">
+        <div class="flex">
+            <h3>universities having most placements done?</h3>
+            <button onclick="maxStudentsInCol('students')">click</button>
+            <p id="demo"></p>
+        </div>
+        
+            <p id="showData"></p>
+    <script>
+        var data;
+    fetch("task.json")
+        .then((res) => res.json())
+        .then((data1) => {
+            data = data1
+        });
+    var arr1 = []
+    var arr = []
+    var studentCount = 0;
+   
+
+    function maxStudentsInCol(cat) {
+        data.universities.filter((uni, index) => {
+            data.colleges.filter(col => {
+                if (uni.un_id === col.un_id) {
+                    data.collegeDepartments.filter(dept => {
+                        if (col.c_id === dept.c_id) {
+                    if (cat === "students") {
+                        studentCount += dept.placements_done
+                    } 
+                }
+                    })
+                    
+                }
+            })
+            if (cat === "students") {
+                arr[index] = studentCount;
+                arr1[index] = { universities: uni.name, placements: studentCount };
+            }
+            studentCount = 0
+            
+        })
+      
+        
+        console.log(arr1, 'hh');
+        arr2 = arr1
+        let id = arr.indexOf(Math.max(...arr))
+        console.log(data.universities[id].name)
+        if (cat === "students") {
+            document.getElementById("demo").innerHTML = "most placement done university name :-"+ data.universities[id].name
+        } 
+        arr1.sort(function (x, y) {
+    return x.universities - y.universities;
+});
+
+console.table(arr1);
+arr1.sort(function (x, y) {
+    return x.placements - y.placements;
+});
+
+console.table(arr1);
+arr1.sort(function (x, y) {
+    return x.studentCount - y.studentCount;
+});
+
+console.table(arr1);     
+
+
+        console.log(arr2);
+            var col = [];
+            for (var i = 0; i < arr2.length; i++) {
+                for (var key in arr2[i]) {
+                    if (col.indexOf(key) === -1) {
+                        col.push(key);
+                    }
+                }
+            }
+
+            var table = document.createElement("table");
+
+            var tr = table.insertRow(-1);
+
+            for (var i = 0; i < col.length; i++) {
+                var th = document.createElement("th");
+                th.innerHTML = col[i];
+                tr.appendChild(th);
+            }
+
+            for (var i = 0; i < arr2.length; i++) {
+
+                tr = table.insertRow(-1);
+
+                for (var j = 0; j < col.length; j++) {
+                    var tabCell = tr.insertCell(-1);
+                    tabCell.innerHTML = arr2[i][col[j]];
+                }
+            }
+
+            var divContainer = document.getElementById("showData");
+            divContainer.innerHTML = "";
+            divContainer.appendChild(table);
+        }
+
+    </script>
+</body>
+</html>
